@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "127951167078",
+    "project_id": "proecommerce-80df6",
+    "storage_bucket": "proecommerce-80df6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127951167078:android:b15fe14d6f1cc6047057a7",
+        "android_client_info": {
+          "package_name": "com.proecommerce.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127951167078-tausjuitk9ikhve7bk122pmtv6j63a28.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.proecommerce.app",
+            "certificate_hash": "eea79c941624bb60dd991a8da424ee2e4cf106db"
+          }
+        },
+        {
+          "client_id": "127951167078-lagdafn7me6ff9e6pq95ncvu27lvam96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMchmO-cAte7TkptiWXEKsgEM9w5QCcpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127951167078-lagdafn7me6ff9e6pq95ncvu27lvam96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
