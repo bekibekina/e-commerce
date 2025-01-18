@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:pro_ecommerce/src/features/cart/presenter/cart/cart_screen.dart';
+import 'package:pro_ecommerce/src/features/category/presenter/category_screen/category_screen.dart';
+import 'package:pro_ecommerce/src/features/products/presentation/products_screen/products_screen.dart';
+import 'package:pro_ecommerce/src/features/wishlist/presenter/wishlist/wishlist_screen.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pro_ecommerce/src/features/authentication/data/firebase_auth_repository.dart';
 import 'package:pro_ecommerce/src/features/authentication/presentation/custom_profile_screen.dart';
 import 'package:pro_ecommerce/src/features/authentication/presentation/custom_sign_in_screen.dart';
-import 'package:pro_ecommerce/src/features/entries/presentation/entries_screen.dart';
-import 'package:pro_ecommerce/src/features/entries/domain/entry.dart';
-import 'package:pro_ecommerce/src/features/jobs/domain/job.dart';
-import 'package:pro_ecommerce/src/features/entries/presentation/entry_screen/entry_screen.dart';
-import 'package:pro_ecommerce/src/features/jobs/presentation/job_entries_screen/job_entries_screen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pro_ecommerce/src/features/jobs/presentation/edit_job_screen/edit_job_screen.dart';
-import 'package:pro_ecommerce/src/features/jobs/presentation/jobs_screen/jobs_screen.dart';
 import 'package:pro_ecommerce/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:pro_ecommerce/src/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:pro_ecommerce/src/routing/go_router_refresh_stream.dart';
@@ -22,21 +19,27 @@ part 'app_router.g.dart';
 
 // private navigators
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _jobsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'jobs');
-final _entriesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'entries');
+final _productsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'products');
+//final _entriesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'entries');
+final _cartNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'cart');
+final _wishlistNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'wishlist');
+final _categoryNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'category');
 final _accountNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 
 enum AppRoute {
   onboarding,
   signIn,
-  jobs,
-  job,
-  addJob,
-  editJob,
-  entry,
-  addEntry,
-  editEntry,
-  entries,
+  products,
+  cart,
+  wishlist,
+  category,
+
+  // addJob,
+  // editJob,
+  // entry,
+  // addEntry,
+  // editEntry,
+  // entries,
   profile,
 }
 
@@ -63,12 +66,14 @@ GoRouter goRouter(Ref ref) {
       final isLoggedIn = authRepository.currentUser != null;
       if (isLoggedIn) {
         if (path.startsWith('/onboarding') || path.startsWith('/signIn')) {
-          return '/jobs';
+          return '/products';
         }
       } else {
         if (path.startsWith('/onboarding') ||
-            path.startsWith('/jobs') ||
-            path.startsWith('/entries') ||
+            path.startsWith('/products') ||
+            path.startsWith('/wishlist') ||
+            path.startsWith('/category') ||
+            path.startsWith('/cart') ||
             path.startsWith('/account')) {
           return '/signIn';
         }
@@ -99,92 +104,50 @@ GoRouter goRouter(Ref ref) {
         ),
         branches: [
           StatefulShellBranch(
-            navigatorKey: _jobsNavigatorKey,
+            navigatorKey: _productsNavigatorKey,
             routes: [
               GoRoute(
-                path: '/jobs',
-                name: AppRoute.jobs.name,
+                path: '/products',
+                name: AppRoute.products.name,
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: JobsScreen(),
+                  child: ProductScreen(),
                 ),
-                routes: [
-                  GoRoute(
-                    path: 'add',
-                    name: AppRoute.addJob.name,
-                    parentNavigatorKey: _rootNavigatorKey,
-                    pageBuilder: (context, state) {
-                      return const MaterialPage(
-                        fullscreenDialog: true,
-                        child: EditJobScreen(),
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: ':id',
-                    name: AppRoute.job.name,
-                    pageBuilder: (context, state) {
-                      final id = state.pathParameters['id']!;
-                      return MaterialPage(
-                        child: JobEntriesScreen(jobId: id),
-                      );
-                    },
-                    routes: [
-                      GoRoute(
-                        path: 'entries/add',
-                        name: AppRoute.addEntry.name,
-                        parentNavigatorKey: _rootNavigatorKey,
-                        pageBuilder: (context, state) {
-                          final jobId = state.pathParameters['id']!;
-                          return MaterialPage(
-                            fullscreenDialog: true,
-                            child: EntryScreen(
-                              jobId: jobId,
-                            ),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'entries/:eid',
-                        name: AppRoute.entry.name,
-                        pageBuilder: (context, state) {
-                          final jobId = state.pathParameters['id']!;
-                          final entryId = state.pathParameters['eid']!;
-                          final entry = state.extra as Entry?;
-                          return MaterialPage(
-                            child: EntryScreen(
-                              jobId: jobId,
-                              entryId: entryId,
-                              entry: entry,
-                            ),
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: 'edit',
-                        name: AppRoute.editJob.name,
-                        pageBuilder: (context, state) {
-                          final jobId = state.pathParameters['id'];
-                          final job = state.extra as Job?;
-                          return MaterialPage(
-                            fullscreenDialog: true,
-                            child: EditJobScreen(jobId: jobId, job: job),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                routes: [],
               ),
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: _entriesNavigatorKey,
+            navigatorKey: _wishlistNavigatorKey,
             routes: [
               GoRoute(
-                path: '/entries',
-                name: AppRoute.entries.name,
+                path: '/wishlist',
+                name: AppRoute.wishlist.name,
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: EntriesScreen(),
+                  child: WishListScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _categoryNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/category',
+                name: AppRoute.category.name,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: CategoryScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _cartNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/cart',
+                name: AppRoute.cart.name,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: CartScreen(),
                 ),
               ),
             ],

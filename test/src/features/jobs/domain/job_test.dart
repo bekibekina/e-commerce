@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pro_ecommerce/src/features/jobs/domain/job.dart';
+import 'package:pro_ecommerce/src/features/products/domain/job.dart';
 
 void main() {
   group('fromMap', () {

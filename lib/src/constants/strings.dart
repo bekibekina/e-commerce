@@ -19,11 +19,17 @@ class Strings {
   // Home page
   static const String homePage = 'Home Page';
 
-  // Jobs page
+  // products page
   static const String ecommerce = 'e-commerce';
 
   // Entries page
   static const String entries = 'Entries';
+
+  static const String wishlist = 'Wishlist';
+
+  static const String category = 'Category';
+
+  static const String cart = 'Cart';
 
   // Account page
   static const String account = 'Account';

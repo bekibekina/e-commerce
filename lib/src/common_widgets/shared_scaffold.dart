@@ -9,9 +9,7 @@ class SharedScaffold extends StatelessWidget {
 
   const SharedScaffold({Key? key, required this.body, required this.title})
       : super(key: key);
-  
-  
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,11 +27,18 @@ class SharedScaffold extends StatelessWidget {
           ),
         ),
         actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: () {},
+            // onPressed: () => context.goNamed(AppRoute.addJob.name),
+          ),
           Stack(
             children: [
               IconButton(
-                icon: const Icon(Icons.shopping_cart, color: Colors.white),
-                onPressed: () => context.goNamed(AppRoute.addJob.name),
+                icon:
+                    const Icon(Icons.notifications_active, color: Colors.white),
+                onPressed: () {},
+                //onPressed: () => context.goNamed(AppRoute.addJob.name),
               ),
               Positioned(
                 top: 0,
@@ -51,10 +56,6 @@ class SharedScaffold extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_active, color: Colors.white),
-            onPressed: () => context.goNamed(AppRoute.addJob.name),
           ),
         ],
       ),
