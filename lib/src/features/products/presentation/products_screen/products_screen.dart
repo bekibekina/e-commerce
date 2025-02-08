@@ -3,15 +3,18 @@ import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pro_ecommerce/src/common_widgets/product_card.dart';
+
 import 'package:pro_ecommerce/src/common_widgets/shared_scaffold.dart';
 import 'package:pro_ecommerce/src/constants/strings.dart';
+import 'package:pro_ecommerce/src/features/authentication/data/firebase_auth_repository.dart';
 import 'package:pro_ecommerce/src/features/products/data/products_repository.dart';
 import 'package:pro_ecommerce/src/features/products/domain/product.dart';
 
 import 'package:pro_ecommerce/src/features/products/presentation/products_screen/products_screen_controller.dart';
-
-import 'package:pro_ecommerce/src/features/products/presentation/products_screen/products_screen_controller.dart';
+import 'package:pro_ecommerce/src/features/wishlist/data/wishlist_repository.dart';
 import 'package:pro_ecommerce/src/routing/app_router.dart';
+
 import 'package:pro_ecommerce/src/utils/async_value_ui.dart';
 
 class ProductScreen extends StatelessWidget {
@@ -89,34 +92,32 @@ class ProductScreen extends StatelessWidget {
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Container(
-        child: TextField(
-          //controller: new ,
-          onChanged: (value) {
-            //Do something wi
-          },
-          decoration: InputDecoration(
-            prefixIcon: const Icon(
-              Icons.search,
-              color: Color(0xff4338CA),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            hintText: "Search",
-            hintStyle: const TextStyle(color: Colors.grey),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.0)),
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white, width: 1.0),
-              borderRadius: BorderRadius.all(Radius.circular(15.0)),
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white, width: 2.0),
-              borderRadius: BorderRadius.all(Radius.circular(15.0)),
-            ),
+      child: TextField(
+        //controller: new ,
+        onChanged: (value) {
+          //Do something wi
+        },
+        decoration: InputDecoration(
+          prefixIcon: const Icon(
+            Icons.search,
+            color: Color(0xff4338CA),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          hintText: "Search",
+          hintStyle: const TextStyle(color: Colors.grey),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 1.0),
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 2.0),
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
         ),
       ),
@@ -166,7 +167,36 @@ class ProductScreen extends StatelessWidget {
                         oldPrice: product.price,
                         stock: product.stock,
                         rating: product.stock.toDouble(),
-                        imageUrl: product.productImg.url,
+                        imageUrl: product.productImages.first.url,
+                        onTap: () {
+                          try {
+                            final user =
+                                ref.read(authRepositoryProvider).currentUser;
+                            if (user == null) {
+                              throw Exception('User not logged in');
+                            }
+                            final userId = user.uid;
+                            ref
+                                .read(wishlistRepositoryProvider)
+                                .addWishlistItem(
+                                  userId: userId,
+                                  productId: product.name,
+                                );
+
+                            context.goNamed(
+                              AppRoute.productDetail.name,
+                              pathParameters: {'id': product.name},
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      '${product.name} added to wishlist')),
+                            );
+                          } catch (e) {
+                            print(e.toString());
+                          }
+                        },
                       );
                     },
                   );
@@ -176,109 +206,6 @@ class ProductScreen extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class ProductCard extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final double price;
-  final double oldPrice;
-  final int stock;
-  final double rating;
-
-  const ProductCard({
-    Key? key,
-    required this.imageUrl,
-    required this.name,
-    required this.price,
-    required this.oldPrice,
-    required this.stock,
-    required this.rating,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15.0),
-              child: Image.network(
-                imageUrl,
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 8),
-            // Product Name
-            Text(
-              name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 4),
-            // Price Section
-            Row(
-              children: [
-                Text(
-                  '\$${price.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                if (oldPrice > price)
-                  Text(
-                    '\$${oldPrice.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      decoration: TextDecoration.lineThrough,
-                      color: Colors.grey,
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            // Stock Info
-            Text(
-              stock > 0 ? '$stock left' : 'Sold Out',
-              style: TextStyle(
-                color: stock > 0 ? Colors.green : Colors.red,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 4),
-            // Rating
-            Row(
-              children: [
-                Icon(Icons.star, size: 16, color: Colors.orange),
-                const SizedBox(width: 4),
-                Text(
-                  rating.toStringAsFixed(1),
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

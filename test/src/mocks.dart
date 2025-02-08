@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/mockito.dart';
 import 'package:pro_ecommerce/src/features/authentication/data/firebase_auth_repository.dart';
 import 'package:pro_ecommerce/src/features/onboarding/data/onboarding_repository.dart';
 

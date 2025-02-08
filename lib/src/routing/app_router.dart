@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pro_ecommerce/src/features/cart/presenter/cart/cart_screen.dart';
 import 'package:pro_ecommerce/src/features/category/presenter/category_screen/category_screen.dart';
 import 'package:pro_ecommerce/src/features/products/presentation/products_screen/products_screen.dart';
-import 'package:pro_ecommerce/src/features/wishlist/presenter/wishlist/wishlist_screen.dart';
+import 'package:pro_ecommerce/src/features/products/presentation/product_details_screen/product_details_screen.dart';
+import 'package:pro_ecommerce/src/features/wishlist/presenter/wishlist_screen.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:pro_ecommerce/src/features/authentication/data/firebase_auth_repository.dart';
@@ -40,7 +41,9 @@ enum AppRoute {
   // addEntry,
   // editEntry,
   // entries,
+
   profile,
+  productDetail
 }
 
 @riverpod
@@ -112,7 +115,20 @@ GoRouter goRouter(Ref ref) {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: ProductScreen(),
                 ),
-                routes: [],
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    name: AppRoute.productDetail.name,
+                    pageBuilder: (context, state) {
+                      final id = state.pathParameters['id']!;
+                      return NoTransitionPage(
+                        child: ProductDetailScreen(
+                          productId: id,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -122,8 +138,8 @@ GoRouter goRouter(Ref ref) {
               GoRoute(
                 path: '/wishlist',
                 name: AppRoute.wishlist.name,
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: WishListScreen(),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: WishlistScreen(),
                 ),
               ),
             ],
